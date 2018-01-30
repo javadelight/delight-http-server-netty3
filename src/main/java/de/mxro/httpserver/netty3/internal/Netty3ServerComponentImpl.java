@@ -6,6 +6,7 @@
 package de.mxro.httpserver.netty3.internal;
 
 import delight.async.callbacks.SimpleCallback;
+import delight.simplelog.Log;
 
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
@@ -15,8 +16,10 @@ import de.mxro.httpserver.netty3.Netty3ServerComponent;
 import de.mxro.server.ComponentConfiguration;
 import de.mxro.server.ComponentContext;
 
-public class Netty3ServerComponentImpl implements Netty3ServerComponent {
-
+public final class Netty3ServerComponentImpl implements Netty3ServerComponent {
+	
+	private final boolean ENABLE_TRACE = false;
+	
     protected final Channel channel;
     protected final int port;
     protected final ServerBootstrap bootstrap;
@@ -35,7 +38,8 @@ public class Netty3ServerComponentImpl implements Netty3ServerComponent {
 
     @Override
     public void stop(final SimpleCallback callback) {
-        try {
+    	
+    	try {
             destroy(callback);
 
         } catch (final Throwable t) {
@@ -51,6 +55,10 @@ public class Netty3ServerComponentImpl implements Netty3ServerComponent {
         this.port = port;
         this.bootstrap = bootstrap;
         this.timer = timer;
+        
+        if (ENABLE_TRACE) {
+        	Log.trace(this, "Starting server on port "+port);
+        }
     }
 
     @Override
@@ -79,7 +87,11 @@ public class Netty3ServerComponentImpl implements Netty3ServerComponent {
         channel.close().awaitUninterruptibly(1000 * 20);
         timer.stop();
         bootstrap.releaseExternalResources();
-
+        
+        if (ENABLE_TRACE) {
+        	Log.trace(this, "Stopped server on port "+port);
+        }
+        
         callback.onSuccess();
 
     }
