@@ -2,6 +2,7 @@ package de.mxro.httpserver.netty3.internal;
 
 import delight.functional.Closure;
 import delight.functional.SuccessFail;
+import delight.simplelog.Log;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -28,6 +29,29 @@ public final class BytesHandler {
 
     private final HttpService service;
 
+    private HttpMethod getHttpMethod(HttpRequest request) {
+    	if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.POST)) {
+            return HttpMethod.POST;
+        } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.GET)) {
+            return HttpMethod.GET;
+        } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.PUT)) {
+            return HttpMethod.PUT;
+        } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.DELETE)) {
+            return HttpMethod.DELETE;
+        } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.HEAD)) {
+            return HttpMethod.HEAD;
+        } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.OPTIONS)) {
+        	return HttpMethod.OPTIONS;
+        } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.CONNECT)) {
+        	return HttpMethod.CONNECT;
+        } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.PATCH)) {
+        	return HttpMethod.PATCH;
+        } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.TRACE)) {
+        	return HttpMethod.TRACE;
+        }
+    	return HttpMethod.UNKNOWN;
+    }
+    
     public final void processRequest(final byte[] receivedData, final MessageEvent e) {
         final HttpRequest request = (HttpRequest) e.getMessage();
         final Response response = HttpServer.createResponse();
@@ -68,6 +92,11 @@ public final class BytesHandler {
             headers.put(en.getKey(), en.getValue());
         }
 
+        final HttpMethod httpMethod = getHttpMethod(request);
+        if (httpMethod.equals(HttpMethod.UNKNOWN)) {
+        	Log.warn(this, "Unknown HTTP method ["+request.getMethod()+"]");
+        }
+        
         service.process(new Request() {
 
             @Override
@@ -90,18 +119,9 @@ public final class BytesHandler {
 
             @Override
             public HttpMethod getMethod() {
-                if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.POST)) {
-                    return HttpMethod.POST;
-                } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.GET)) {
-                    return HttpMethod.GET;
-                } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.PUT)) {
-                    return HttpMethod.PUT;
-                } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.DELETE)) {
-                    return HttpMethod.DELETE;
-                } else if (request.getMethod().equals(org.jboss.netty.handler.codec.http.HttpMethod.HEAD)) {
-                    return HttpMethod.HEAD;
-                }
-                throw new IllegalStateException("Http method not supported: " + request.getMethod());
+                
+                
+                return httpMethod;
 
             }
 
