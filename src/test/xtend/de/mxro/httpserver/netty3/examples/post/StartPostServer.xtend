@@ -1,9 +1,10 @@
 package de.mxro.httpserver.netty3.examples.post
 
 import de.mxro.httpserver.netty3.Netty3Server
-import de.mxro.httpserver.services.Services
+import de.mxro.httpserver.services.HttpServices
 import delight.async.AsyncCommon
 import delight.async.jre.Async
+import delight.concurrency.jre.ConcurrencyJre
 import java.util.HashMap
 
 class StartPostServer {
@@ -12,11 +13,13 @@ class StartPostServer {
 		
 		val services = new HashMap
 		
-		services.put("/service", Services.echo)
-		services.put("*", Services.data(PAGE.bytes, "text/html"))
+		
+		
+		services.put("/service", HttpServices.echo)
+		services.put("*", HttpServices.data(PAGE.bytes, "text/html"))
 
 		val server = Async.waitFor([cb |
-			Netty3Server.start(Services.dispatcher(services), 8081, cb)
+			Netty3Server.start(HttpServices.dispatcher(ConcurrencyJre.create, services), 8081, cb)
 		
 			])
 		 

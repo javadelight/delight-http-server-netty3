@@ -2,7 +2,7 @@ package de.mxro.httpserver.netty3.tests;
 
 import de.mxro.httpserver.netty3.Netty3Server;
 import de.mxro.httpserver.netty3.Netty3ServerComponent;
-import de.mxro.httpserver.services.Services;
+import de.mxro.httpserver.services.HttpServices;
 import delight.async.Operation;
 import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
@@ -22,7 +22,7 @@ public class TestThatShutdownServerWorks {
       final Operation<Netty3ServerComponent> _function = new Operation<Netty3ServerComponent>() {
         @Override
         public void apply(final ValueCallback<Netty3ServerComponent> cb) {
-          Netty3Server.start(Services.echo(), 12322, cb);
+          Netty3Server.start(HttpServices.echo(), 12322, cb);
         }
       };
       final Netty3ServerComponent server = Async.<Netty3ServerComponent>waitFor(_function);

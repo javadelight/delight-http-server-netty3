@@ -5,11 +5,12 @@ import de.mxro.httpserver.HttpService;
 import de.mxro.httpserver.netty3.Netty3Server;
 import de.mxro.httpserver.netty3.Netty3ServerComponent;
 import de.mxro.httpserver.netty3.tests.JsonService;
-import de.mxro.httpserver.services.Services;
+import de.mxro.httpserver.services.HttpServices;
 import delight.async.AsyncCommon;
 import delight.async.Operation;
 import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
+import delight.concurrency.jre.ConcurrencyJre;
 import java.util.HashMap;
 import org.eclipse.xtext.xbase.lib.Exceptions;
 import org.junit.Assert;
@@ -21,10 +22,10 @@ public class TestUnicode {
   public void test() {
     try {
       final HashMap<String, HttpService> serviceMap = new HashMap<String, HttpService>();
-      serviceMap.put("/one", Services.delayedEcho(1));
+      serviceMap.put("/one", HttpServices.delayedEcho(1));
       JsonService _jsonService = new JsonService();
       serviceMap.put("/two", _jsonService);
-      final HttpService service = Services.withParallelWorkerThreads("test", 10, 230000, Services.dispatcher(serviceMap));
+      final HttpService service = HttpServices.withParallelWorkerThreads("test", 10, 230000, HttpServices.dispatcher(ConcurrencyJre.create(), serviceMap));
       final Operation<Object> _function = new Operation<Object>() {
         @Override
         public void apply(final ValueCallback<Object> cb) {

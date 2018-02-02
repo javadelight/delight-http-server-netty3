@@ -21,7 +21,7 @@ import de.mxro.httpserver.HttpService;
 import de.mxro.httpserver.netty3.internal.BytesHandler;
 import de.mxro.httpserver.netty3.internal.Netty3ServerComponentImpl;
 import de.mxro.httpserver.netty3.internal.RestServerPipelineFactory;
-import de.mxro.httpserver.services.Services;
+import de.mxro.httpserver.services.HttpServices;
 import de.mxro.server.ServerComponent;
 import de.mxro.sslutils.SslKeyStoreData;
 
@@ -56,7 +56,7 @@ public class Netty3Server {
             @Override
             public HttpService service() {
 
-                return Services.shutdown(secret, operations, ownServer);
+                return HttpServices.shutdown(secret, operations, ownServer);
             }
 
             @Override
@@ -90,7 +90,7 @@ public class Netty3Server {
 
         // bootstrap.setOption("child.keepAlive", true);
 
-        final BytesHandler messageHandler = new BytesHandler(Services.safeShutdown(conf.service()));
+        final BytesHandler messageHandler = new BytesHandler(HttpServices.safeShutdown(conf.service()));
 
         final Timer timer = new HashedWheelTimer();
 

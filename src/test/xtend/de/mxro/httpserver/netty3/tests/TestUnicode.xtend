@@ -3,9 +3,10 @@ package de.mxro.httpserver.netty3.tests
 import com.mashape.unirest.http.Unirest
 import de.mxro.httpserver.HttpService
 import de.mxro.httpserver.netty3.Netty3Server
-import de.mxro.httpserver.services.Services
+import de.mxro.httpserver.services.HttpServices
 import delight.async.AsyncCommon
 import delight.async.jre.Async
+import delight.concurrency.jre.ConcurrencyJre
 import java.util.HashMap
 import org.junit.Assert
 import org.junit.Test
@@ -17,10 +18,10 @@ class TestUnicode {
 	def public void test() {
 		val serviceMap = new HashMap<String, HttpService>()
 
-		serviceMap.put("/one", Services.delayedEcho(1))
+		serviceMap.put("/one", HttpServices.delayedEcho(1))
 		serviceMap.put("/two", new JsonService)
 
-		val service = Services.withParallelWorkerThreads("test", 10, 230000, Services.dispatcher(serviceMap))
+		val service = HttpServices.withParallelWorkerThreads("test", 10, 230000, HttpServices.dispatcher(ConcurrencyJre.create, serviceMap))
 		
 		Async.waitFor [ cb |
 			service.start(AsyncCommon.asSimpleCallback(cb))

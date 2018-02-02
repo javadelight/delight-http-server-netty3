@@ -1,13 +1,13 @@
 package de.mxro.httpserver.netty3.tests
 
 import de.mxro.httpserver.netty3.Netty3Server
-import de.mxro.httpserver.services.Services
 import delight.async.jre.Async
 import java.io.InputStream
 import java.net.URL
 import java.util.Scanner
 import org.junit.Assert
 import org.junit.Test
+import de.mxro.httpserver.services.HttpServices
 
 class TestThatShutdownServerWorks {
 
@@ -15,7 +15,7 @@ class TestThatShutdownServerWorks {
 	def void test() {
 		val server = Async.waitFor(
 			[ cb |
-				Netty3Server.start(Services.echo(), 12322, cb)
+				Netty3Server.start(HttpServices.echo(), 12322, cb)
 			])
 
 		Async.waitFor(

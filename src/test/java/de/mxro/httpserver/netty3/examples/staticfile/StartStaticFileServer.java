@@ -5,7 +5,7 @@ import de.mxro.httpserver.netty3.Netty3Server;
 import de.mxro.httpserver.netty3.Netty3ServerComponent;
 import de.mxro.httpserver.resources.ResourceProvider;
 import de.mxro.httpserver.resources.Resources;
-import de.mxro.httpserver.services.Services;
+import de.mxro.httpserver.services.HttpServices;
 import delight.async.AsyncCommon;
 import delight.async.Operation;
 import delight.async.callbacks.ValueCallback;
@@ -18,7 +18,7 @@ public class StartStaticFileServer {
   public static void main(final String[] args) {
     try {
       final ResourceProvider source = Resources.cache(Resources.forWeb(Resources.fromClasspath(StartStaticFileServer.class)));
-      final HttpService service = Services.resources(source);
+      final HttpService service = HttpServices.resources(source);
       final Operation<Object> _function = new Operation<Object>() {
         @Override
         public void apply(final ValueCallback<Object> cb) {

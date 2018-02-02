@@ -3,11 +3,12 @@ package de.mxro.httpserver.netty3.examples.post;
 import de.mxro.httpserver.HttpService;
 import de.mxro.httpserver.netty3.Netty3Server;
 import de.mxro.httpserver.netty3.Netty3ServerComponent;
-import de.mxro.httpserver.services.Services;
+import de.mxro.httpserver.services.HttpServices;
 import delight.async.AsyncCommon;
 import delight.async.Operation;
 import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
+import delight.concurrency.jre.ConcurrencyJre;
 import java.util.HashMap;
 import org.eclipse.xtend2.lib.StringConcatenation;
 import org.eclipse.xtext.xbase.lib.Exceptions;
@@ -19,12 +20,12 @@ public class StartPostServer {
   public static void main(final String[] args) {
     try {
       final HashMap<String, HttpService> services = new HashMap<String, HttpService>();
-      services.put("/service", Services.echo());
-      services.put("*", Services.data(StartPostServer.PAGE.getBytes(), "text/html"));
+      services.put("/service", HttpServices.echo());
+      services.put("*", HttpServices.data(StartPostServer.PAGE.getBytes(), "text/html"));
       final Operation<Netty3ServerComponent> _function = new Operation<Netty3ServerComponent>() {
         @Override
         public void apply(final ValueCallback<Netty3ServerComponent> cb) {
-          Netty3Server.start(Services.dispatcher(services), 8081, cb);
+          Netty3Server.start(HttpServices.dispatcher(ConcurrencyJre.create(), services), 8081, cb);
         }
       };
       final Netty3ServerComponent server = Async.<Netty3ServerComponent>waitFor(_function);

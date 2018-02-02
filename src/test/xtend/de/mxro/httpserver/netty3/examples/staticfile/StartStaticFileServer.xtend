@@ -2,16 +2,16 @@ package de.mxro.httpserver.netty3.examples.staticfile
 
 import de.mxro.httpserver.netty3.Netty3Server
 import de.mxro.httpserver.resources.Resources
-import de.mxro.httpserver.services.Services
 import delight.async.AsyncCommon
 import delight.async.jre.Async
+import de.mxro.httpserver.services.HttpServices
 
 class StartStaticFileServer {
 	def static void main(String[] args) {
 		
 		val source = Resources.cache(Resources.forWeb(Resources.fromClasspath(StartStaticFileServer)));
 		
-		val service = Services.resources(source)
+		val service = HttpServices.resources(source)
 
 		Async.waitFor([cb | service.start(AsyncCommon.asSimpleCallback(cb))])
 

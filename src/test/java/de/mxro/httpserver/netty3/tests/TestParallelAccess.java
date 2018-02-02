@@ -6,13 +6,14 @@ import com.mashape.unirest.http.Unirest;
 import de.mxro.httpserver.HttpService;
 import de.mxro.httpserver.netty3.Netty3Server;
 import de.mxro.httpserver.netty3.Netty3ServerComponent;
-import de.mxro.httpserver.services.Services;
+import de.mxro.httpserver.services.HttpServices;
 import de.mxro.metrics.jre.Metrics;
 import delight.async.AsyncCommon;
 import delight.async.Operation;
 import delight.async.callbacks.ValueCallback;
 import delight.async.jre.Async;
 import delight.async.properties.PropertyNode;
+import delight.concurrency.jre.ConcurrencyJre;
 import delight.functional.Closure;
 import delight.functional.Success;
 import java.util.ArrayList;
@@ -32,9 +33,9 @@ public class TestParallelAccess {
   public void test_parallel_possible() {
     try {
       final HashMap<String, HttpService> serviceMap = new HashMap<String, HttpService>();
-      serviceMap.put("/one", Services.delayedEcho(100));
-      serviceMap.put("/two", Services.delayedEcho(1));
-      final HttpService service = Services.withParallelWorkerThreads("test", 10, 230000, Services.dispatcher(serviceMap));
+      serviceMap.put("/one", HttpServices.delayedEcho(100));
+      serviceMap.put("/two", HttpServices.delayedEcho(1));
+      final HttpService service = HttpServices.withParallelWorkerThreads("test", 10, 230000, HttpServices.dispatcher(ConcurrencyJre.create(), serviceMap));
       final Operation<Object> _function = new Operation<Object>() {
         @Override
         public void apply(final ValueCallback<Object> cb) {
@@ -113,9 +114,9 @@ public class TestParallelAccess {
   public void test_queue_overflow() {
     try {
       final HashMap<String, HttpService> serviceMap = new HashMap<String, HttpService>();
-      serviceMap.put("/one", Services.delayedEcho(100));
-      serviceMap.put("/two", Services.delayedEcho(1));
-      final HttpService service = Services.withParallelWorkerThreads("test", 2, 230000, Services.dispatcher(serviceMap));
+      serviceMap.put("/one", HttpServices.delayedEcho(100));
+      serviceMap.put("/two", HttpServices.delayedEcho(1));
+      final HttpService service = HttpServices.withParallelWorkerThreads("test", 2, 230000, HttpServices.dispatcher(ConcurrencyJre.create(), serviceMap));
       final Operation<Object> _function = new Operation<Object>() {
         @Override
         public void apply(final ValueCallback<Object> cb) {
@@ -194,9 +195,9 @@ public class TestParallelAccess {
   public void test_task_delayed() {
     try {
       final HashMap<String, HttpService> serviceMap = new HashMap<String, HttpService>();
-      serviceMap.put("/slow", Services.withParallelWorkerThreads("slow", 2, 5000, Services.delayedEcho(400)));
-      serviceMap.put("/fast", Services.withParallelWorkerThreads("fast", 2, 5000, Services.delayedEcho(1)));
-      final HttpService service = Services.withParallelWorkerThreads("dispatcher", 2, 230000, Services.dispatcher(serviceMap));
+      serviceMap.put("/slow", HttpServices.withParallelWorkerThreads("slow", 2, 5000, HttpServices.delayedEcho(400)));
+      serviceMap.put("/fast", HttpServices.withParallelWorkerThreads("fast", 2, 5000, HttpServices.delayedEcho(1)));
+      final HttpService service = HttpServices.withParallelWorkerThreads("dispatcher", 2, 230000, HttpServices.dispatcher(ConcurrencyJre.create(), serviceMap));
       final Operation<Object> _function = new Operation<Object>() {
         @Override
         public void apply(final ValueCallback<Object> cb) {
@@ -312,8 +313,8 @@ public class TestParallelAccess {
   @Test
   public void test_task_timeout() {
     final HashMap<String, HttpService> serviceMap = new HashMap<String, HttpService>();
-    serviceMap.put("/slow", Services.withParallelWorkerThreads("slow", 2, 100, Services.delayedEcho(1000)));
-    final HttpService service = Services.withParallelWorkerThreads("dispatcher", 2, 100, Services.dispatcher(serviceMap));
+    serviceMap.put("/slow", HttpServices.withParallelWorkerThreads("slow", 2, 100, HttpServices.delayedEcho(1000)));
+    final HttpService service = HttpServices.withParallelWorkerThreads("dispatcher", 2, 100, HttpServices.dispatcher(ConcurrencyJre.create(), serviceMap));
     final Operation<Object> _function = new Operation<Object>() {
       @Override
       public void apply(final ValueCallback<Object> cb) {
