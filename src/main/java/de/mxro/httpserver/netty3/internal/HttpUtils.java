@@ -5,6 +5,7 @@ import static org.jboss.netty.handler.codec.http.HttpResponseStatus.OK;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 import java.io.UnsupportedEncodingException;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -62,7 +63,7 @@ public class HttpUtils {
     }
 
     public static void sendFullHttpResponse(final MessageEvent event, final byte[] bytes, final int responseCode,
-            final Map<String, String> headerFields) {
+            final Map<String, List<String>> headerFields) {
 
         final HttpResponse response = new DefaultHttpResponse(HTTP_1_1, HttpResponseStatus.valueOf(responseCode));
 
@@ -70,7 +71,7 @@ public class HttpUtils {
         response.setContent(buffer);
 
         if (headerFields != null) {
-            for (final Entry<String, String> header : headerFields.entrySet()) {
+            for (final Entry<String, List<String>> header : headerFields.entrySet()) {
 
                 if (header.getKey() != null) {
                     response.headers().add(header.getKey(), header.getValue());
