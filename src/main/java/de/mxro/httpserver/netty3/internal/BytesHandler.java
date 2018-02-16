@@ -171,10 +171,16 @@ public final class BytesHandler {
             public void apply(final SuccessFail o) {
 
                 if (o.isFail()) {
-                    HttpUtils.sendHttpError(e, o.getException().getMessage());
+                    String message = o.getException().getMessage();
+                    if (message == null) {
+                    	message = "Received exception: "+o.getException();
+                    }
+					HttpUtils.sendHttpError(e, message);
                     return;
                 }
-
+                
+                //Log.println(this, "Sending response: "+response);
+                
                 HttpUtils.sendFullHttpResponse(e, response.getContent(), response.getResponseCode(),
                         response.getHeaders());
 
