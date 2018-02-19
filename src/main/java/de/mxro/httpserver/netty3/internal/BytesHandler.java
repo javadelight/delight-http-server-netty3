@@ -175,11 +175,16 @@ public final class BytesHandler {
                     if (message == null) {
                     	message = "Received exception: "+o.getException();
                     }
-					HttpUtils.sendHttpError(e, message);
+                    
+                    
+                    String stackTrace = "";
+                    for (final StackTraceElement element : o.getException().getStackTrace()) {
+        				stackTrace+= element.toString()+"\n";
+        			}
+                    
+					HttpUtils.sendHttpError(e, message+"\n"+stackTrace);
                     return;
                 }
-                
-                //Log.println(this, "Sending response: "+response);
                 
                 HttpUtils.sendFullHttpResponse(e, response.getContent(), response.getResponseCode(),
                         response.getHeaders());
